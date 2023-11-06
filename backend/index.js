@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose')
 
 const videoRouter = require('./routes/videoRouter')
+const authRouter = require('./routes/authRouter.js')
 const app = express();
 app.use(express.json());
 
@@ -21,6 +22,7 @@ app.get('/', function(req, res){
 
 // additional routers
 app.use(videoRouter)
+app.use(authRouter)
 
 app.listen(5500, function(){
     console.log("App server running on 5500")

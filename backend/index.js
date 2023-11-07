@@ -1,10 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose')
+const cors = require('cors');
 
 const videoRouter = require('./routes/videoRouter')
 const authRouter = require('./routes/authRouter.js')
 const app = express();
 app.use(express.json());
+app.use(cors())
 
 // const DBURL = "mongodb://127.0.0.1:27017/youtubeclone"
 const DBURL = "mongodb+srv://youtubeclone:1234@cluster0.5ofd4si.mongodb.net/youtubeclone_17112002"

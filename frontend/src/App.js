@@ -10,6 +10,7 @@ import 'bootstrap/dist/js/bootstrap.js'
 
 import {BrowserRouter, Route, Routes} from 'react-router-dom'
 import SignIn from './SignIn';
+import Upload from './Upload';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route exact path="/" element={<Home/>}></Route>
           <Route exact path="/video" element={<Video/>}></Route>
           <Route exact path="/signin" element={<SignIn/>}></Route>
+          <Route exact path="/upload" element={<Upload/>}></Route>
         </Routes>
       </BrowserRouter>
     </div>

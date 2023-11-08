@@ -5,6 +5,7 @@ import Header from './Header'
 import tmkoc from './images/tmkoc.jpg'
 import avtar from './images/avtar.png'
 import {LiaThumbsDown, LiaThumbsUp, LiaDownloadSolid} from 'react-icons/lia'
+import {IoMdThumbsUp} from 'react-icons/io'
 import {PiShareFatLight} from 'react-icons/pi'
 import { Link } from 'react-router-dom'
 
@@ -37,7 +38,69 @@ function SuggestedVideo(props){
 
 function VideoInfo(props){
   const video = props.currVideo;
-  console.log(props)
+  console.log(video.likes)
+
+  const [likes, setLikes] = useState(video.likes);
+
+  const copyToClipboard = (text) => {
+    console.log('text', text)
+    var textField = document.createElement('textarea')
+    textField.innerText = text
+    document.body.appendChild(textField)
+    textField.select()
+    document.execCommand('copy')
+    textField.remove()
+
+    alert("Video Link copied : " + text);
+  }
+
+  useEffect(() => {
+      setLikes(video.likes)
+  }, [video.likes])
+
+  const handleLikes = () => {
+
+    let newLikes = JSON.parse(localStorage.getItem(`like_${video.id}`)) ? 
+    JSON.parse(localStorage.getItem(`like_${video.id}`))
+    : [];
+    if(newLikes.includes(localStorage.getItem('email'))){
+      newLikes.pop(localStorage.getItem('email'));
+    }else{
+      newLikes.push(localStorage.getItem('email'));
+    }
+    
+    localStorage.setItem(`like_${video.id}`, JSON.stringify(newLikes))
+    
+    const requesturl = `http://localhost:5500/video/${video._id}/like`;
+
+    fetch(requesturl, {method: 'POST', 
+        headers:{
+            'Content-Type': 'application/json', 
+            'Authorization' : localStorage.getItem('token')
+        }})
+    .then(response => {
+        console.log(response)
+        if(response.ok){
+            return response.json();
+        }else{
+            throw new Error(response.message)
+        }
+    })
+    .then(data => {
+        if(data.success){
+            console.log("Success", data.video)
+            setLikes(data.video.likes)
+          }else{
+            alert(data.message)
+        }
+        console.log(data)
+    })
+    .catch(error => {
+        console.log(error)
+    })
+  }
+
+  console.log("Likes", likes)
   return (
     <>
       <h5 className='video-title'>
@@ -53,14 +116,26 @@ function VideoInfo(props){
           <button className='subscribe'>Subscribe</button>
         </div>
         <div className='video-action-buttons'>
-          <button>
-            <LiaThumbsUp size={'1.4rem'} />{video.likes} | <LiaThumbsDown size={'1.4rem'} /></button>
-          <button>
+          <button onClick={() => {handleLikes()}}>
+            { (JSON.parse(localStorage.getItem(`like_${video.id}`)) ? 
+              JSON.parse(localStorage.getItem(`like_${video.id}`))
+              : []).includes(localStorage.getItem('email')) ? 
+              <IoMdThumbsUp size={'1.4rem'} />
+            :
+              <LiaThumbsUp size={'1.4rem'} />
+            }
+            {/* <LiaThumbsUp size={'1.4rem'} /> */}
+            {likes} | <LiaThumbsDown size={'1.4rem'} /></button>
+          <button onClick={() => copyToClipboard(window.location.href)}>
             <PiShareFatLight size={'1.4rem'}/>
             Share</button>
-          <button>
+          <a href={`https://www.ssyoutube.com/watch?v=${video.videoId}`} 
+            target='_blank'>
+              <button class="download-button">
             <LiaDownloadSolid size={'1.4rem'}/>
             Download</button>
+          </a>
+          
         </div>
         
       </div>
